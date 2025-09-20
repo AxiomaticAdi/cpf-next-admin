@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createEvent } from "@/lib/actions/create-event";
 import { SALES_TAX } from "@/lib/constants";
+import { toast } from "sonner";
 
 export function CreateEventForm() {
   const [formData, setFormData] = useState({
@@ -22,7 +23,6 @@ export function CreateEventForm() {
 
   const [addSalesTax, setAddSalesTax] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState("");
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -37,7 +37,6 @@ export function CreateEventForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitMessage("");
 
     try {
       const result = await createEvent({
@@ -46,7 +45,7 @@ export function CreateEventForm() {
       });
 
       if (result.success) {
-        setSubmitMessage("Event created successfully!");
+        toast.success("Event created successfully!");
         // Reset form
         setFormData({
           name: "",
@@ -59,10 +58,10 @@ export function CreateEventForm() {
         });
         setAddSalesTax(true);
       } else {
-        setSubmitMessage(`Error: ${result.error}`);
+        toast.error(`Error: ${result.error}`);
       }
     } catch (error) {
-      setSubmitMessage("An unexpected error occurred. Please try again.");
+      toast.error(`An unexpected error occurred: ${error}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -71,18 +70,6 @@ export function CreateEventForm() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create New Event</h1>
-
-      {submitMessage && (
-        <div
-          className={`p-4 rounded-md mb-6 ${
-            submitMessage.includes("Error")
-              ? "bg-red-50 text-red-700 border border-red-200"
-              : "bg-green-50 text-green-700 border border-green-200"
-          }`}
-        >
-          {submitMessage}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
