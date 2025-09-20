@@ -6,9 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { createEvent } from "@/lib/actions/create-event";
 import { SALES_TAX } from "@/lib/constants";
 import { toast } from "sonner";
+import EventDetailsSection from "./create-event-preview";
 
 export function CreateEventForm() {
   const [formData, setFormData] = useState({
@@ -23,6 +31,7 @@ export function CreateEventForm() {
 
   const [addSalesTax, setAddSalesTax] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -34,8 +43,12 @@ export function CreateEventForm() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePreview = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowPreview(true);
+  };
+
+  const handleCreateEvent = async () => {
     setIsSubmitting(true);
 
     try {
@@ -46,6 +59,7 @@ export function CreateEventForm() {
 
       if (result.success) {
         toast.success("Event created successfully!");
+        setShowPreview(false);
         // Reset form
         setFormData({
           name: "",
@@ -71,7 +85,7 @@ export function CreateEventForm() {
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create New Event</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handlePreview} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="name">Event Name</Label>
           <Input
@@ -190,8 +204,8 @@ export function CreateEventForm() {
         </div>
 
         <div className="flex gap-4 pt-4">
-          <Button type="submit" className="flex-1" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create Event"}
+          <Button type="submit" className="flex-1">
+            Preview Event
           </Button>
           <Button
             type="button"
@@ -213,6 +227,29 @@ export function CreateEventForm() {
           </Button>
         </div>
       </form>
+
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Event Preview</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <EventDetailsSection
+              formData={formData}
+              addSalesTax={addSalesTax}
+              includeDetails={true}
+            />
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowPreview(false)}>
+              Return to editing
+            </Button>
+            <Button onClick={handleCreateEvent} disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Launch Event"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
