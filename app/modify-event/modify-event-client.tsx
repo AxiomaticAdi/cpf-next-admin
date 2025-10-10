@@ -98,7 +98,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               Description
             </span>
             <div
-              className="rounded-md border border-border bg-background/50 px-4 py-3 text-sm leading-relaxed"
+              className="rounded-md border border-border bg-background/50 px-4 py-3 text-sm prose text-left"
               dangerouslySetInnerHTML={{ __html: selectedEvent.description }}
             />
           </div>
