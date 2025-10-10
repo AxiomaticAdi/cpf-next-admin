@@ -11,3 +11,15 @@ export type FirebaseEventsDocument = {
   Sold: number;
   Price: number;
 };
+
+export type Event = {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  startTime: Date;
+  endTime: Date;
+  capacity: number;
+  sold: number;
+  price: number;
+};
