@@ -80,10 +80,12 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               <dd>{formatDate(selectedEvent.endTime)}</dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
+              <dt className="font-medium text-muted-foreground">Sold</dt>
+              <dd>{selectedEvent.sold}</dd>
+            </div>
+            <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Capacity</dt>
-              <dd>
-                {selectedEvent.sold} of {selectedEvent.capacity} sold
-              </dd>
+              <dd> {selectedEvent.capacity}</dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Price</dt>
