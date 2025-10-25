@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Timestamp } from "firebase-admin/firestore";
 import db from "@/firebase.config";
 import { Event } from "@/types";
+import { validateEvent } from "./validate-event";
 
 export type UpdateEventResult = {
   success: boolean;
@@ -17,6 +18,15 @@ export async function updateEvent(
   try {
     if (!eventId) {
       return { success: false, error: "Missing event identifier" };
+    }
+
+    // Validate the event data
+    const validationResult = await validateEvent(updatedEvent);
+    if (!validationResult.isValid) {
+      return {
+        success: false,
+        error: validationResult.errors?.join(", ") || "Invalid event data",
+      };
     }
 
     const eventRef = db.collection("Events").doc(eventId);
