@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Event } from "@/types";
+import { updateEvent } from "@/lib/actions/update-event";
 
 type ModifyEventClientProps = {
   events: Event[];
@@ -24,11 +25,48 @@ function formatCurrency(amount: number) {
 
 export function ModifyEventClient({ events }: ModifyEventClientProps) {
   const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");
+  const [soldTickets, setSoldTickets] = useState<number>(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const selectedEvent = useMemo(
     () => events.find((event) => event.id === selectedId),
     [events, selectedId],
   );
+
+  // Update soldTickets when selectedEvent changes
+  useMemo(() => {
+    if (selectedEvent) {
+      setSoldTickets(selectedEvent.sold);
+      setSaveMessage(null);
+    }
+  }, [selectedEvent]);
+
+  const handleSave = async () => {
+    if (!selectedEvent) return;
+
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    const result = await updateEvent(selectedId, {
+      ...selectedEvent,
+      sold: soldTickets,
+    });
+
+    setIsSaving(false);
+
+    if (result.success) {
+      setSaveMessage({ type: "success", text: "Changes saved successfully!" });
+    } else {
+      setSaveMessage({
+        type: "error",
+        text: result.error || "Failed to save changes",
+      });
+    }
+  };
 
   if (!events.length) {
     return (
@@ -81,7 +119,15 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Sold</dt>
-              <dd>{selectedEvent.sold}</dd>
+              <dd>
+                <input
+                  type="number"
+                  value={soldTickets}
+                  onChange={(e) => setSoldTickets(Number(e.target.value))}
+                  min={0}
+                  className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Capacity</dt>
@@ -101,6 +147,28 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               className="rounded-md border border-border bg-background/50 px-4 py-3 text-sm prose text-left"
               dangerouslySetInnerHTML={{ __html: selectedEvent.description }}
             />
+          </div>
+
+          <div className="mt-6 flex items-center gap-4">
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+
+            {saveMessage && (
+              <span
+                className={`text-sm ${
+                  saveMessage.type === "success"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {saveMessage.text}
+              </span>
+            )}
           </div>
         </div>
       ) : (
