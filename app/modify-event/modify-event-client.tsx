@@ -64,7 +64,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     if (result.success) {
       toast.success("Changes saved successfully!");
     } else {
-      toast.error(result.error || "Failed to save changes");
+      toast.error(`Failed to save changes${result.error ? `: ${result.error}` : ""}`);
     }
   };
 
