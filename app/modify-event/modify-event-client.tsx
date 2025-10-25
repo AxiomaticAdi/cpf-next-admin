@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Event } from "@/types";
 import { updateEvent } from "@/lib/actions/update-event";
+import { toast } from "sonner";
 
 type ModifyEventClientProps = {
   events: Event[];
@@ -34,10 +35,6 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     () => events[0] ?? null,
   );
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
 
   // Update editedEvent when selectedId changes
   const handleEventSelect = (eventId: string) => {
@@ -45,7 +42,6 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     if (event) {
       setSelectedId(eventId);
       setEditedEvent(event);
-      setSaveMessage(null);
     }
   };
 
@@ -53,7 +49,6 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     const originalEvent = events.find((e) => e.id === selectedId);
     if (originalEvent) {
       setEditedEvent(originalEvent);
-      setSaveMessage(null);
     }
   };
 
@@ -61,19 +56,15 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     if (!editedEvent) return;
 
     setIsSaving(true);
-    setSaveMessage(null);
 
     const result = await updateEvent(selectedId, editedEvent);
 
     setIsSaving(false);
 
     if (result.success) {
-      setSaveMessage({ type: "success", text: "Changes saved successfully!" });
+      toast.success("Changes saved successfully!");
     } else {
-      setSaveMessage({
-        type: "error",
-        text: result.error || "Failed to save changes",
-      });
+      toast.error(result.error || "Failed to save changes");
     }
   };
 
@@ -238,18 +229,6 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
             >
               Discard Changes
             </button>
-
-            {saveMessage && (
-              <span
-                className={`text-sm ${
-                  saveMessage.type === "success"
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
-                {saveMessage.text}
-              </span>
-            )}
           </div>
         </div>
       ) : (
