@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Event } from "@/types";
+import { Button } from "../../components/ui/button";
 
 type DeleteEventClientProps = {
   events: Event[];
@@ -21,6 +22,7 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(
     () => events[0] ?? null,
   );
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   // Update selectedEvent when selectedId changes
   const handleEventSelect = (eventId: string) => {
@@ -28,12 +30,18 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
     if (event) {
       setSelectedId(eventId);
       setSelectedEvent(event);
+      setShowConfirmation(false); // Reset confirmation when changing events
     }
   };
 
-  const handleDelete = () => {
+  const handleInitialDelete = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
     if (!selectedId) return;
     console.log("Delete event with ID:", selectedId);
+    setShowConfirmation(false);
   };
 
   if (!events.length) {
@@ -99,13 +107,30 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
             </div>
           </dl>
 
-          <div className="mt-6">
-            <button
-              onClick={handleDelete}
-              className="rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground shadow hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            >
+          <div className="mt-6 space-y-3">
+            <Button variant="destructive" onClick={handleInitialDelete}>
               Delete Event
-            </button>
+            </Button>
+
+            {showConfirmation && (
+              <div className="flex flex-col gap-3">
+                <p className="text-sm font-medium text-destructive">
+                  Are you absolutely sure? Event deletion cannot be reversed,
+                  and the data is lost forever.
+                </p>
+                <div className="flex gap-2">
+                  <Button variant="destructive" onClick={handleConfirmDelete}>
+                    Yes, Delete Permanently
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowConfirmation(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : (

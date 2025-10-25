@@ -36,6 +36,7 @@ npm run fix-all
 ### Component Structure
 
 - Uses shadcn/ui component pattern with components stored in `/components/ui/`
+- Always use NextJs components for images or links or routing, and Shadcn components for buttons
 - Components are built using Radix UI primitives with Tailwind CSS styling
 - The `cn()` utility function in `/lib/utils.ts` is used for combining classNames with proper Tailwind CSS class merging
 
