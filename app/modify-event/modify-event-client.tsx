@@ -19,6 +19,15 @@ function formatDateTimeLocal(date: Date | string): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+function formatDateOnly(date: Date | string): string {
+  // Convert Date to a readable date format like "Jan 15, 2025"
+  const d = new Date(date);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function ModifyEventClient({ events }: ModifyEventClientProps) {
   const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");
   const [editedEvent, setEditedEvent] = useState<Event | null>(
@@ -91,7 +100,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
         >
           {events.map((event) => (
             <option key={event.id} value={event.id}>
-              {event.name}
+              {event.name} ({formatDateOnly(event.startTime)})
             </option>
           ))}
         </select>
@@ -140,7 +149,10 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                   type="number"
                   value={editedEvent.sold}
                   onChange={(e) =>
-                    setEditedEvent({ ...editedEvent, sold: Number(e.target.value) })
+                    setEditedEvent({
+                      ...editedEvent,
+                      sold: Number(e.target.value),
+                    })
                   }
                   min={0}
                   className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -171,7 +183,10 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                   type="number"
                   value={editedEvent.price}
                   onChange={(e) =>
-                    setEditedEvent({ ...editedEvent, price: Number(e.target.value) })
+                    setEditedEvent({
+                      ...editedEvent,
+                      price: Number(e.target.value),
+                    })
                   }
                   min={0}
                   step={0.01}
@@ -182,12 +197,20 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
           </dl>
 
           <div className="mt-6 space-y-2">
-            <span className="text-sm font-medium text-muted-foreground">
-              Description
-            </span>
-            <div
-              className="rounded-md border border-border bg-background/50 px-4 py-3 text-sm prose text-left"
-              dangerouslySetInnerHTML={{ __html: editedEvent.description }}
+            <label
+              htmlFor="description"
+              className="text-sm font-medium text-muted-foreground"
+            >
+              Description (HTML)
+            </label>
+            <textarea
+              id="description"
+              value={editedEvent.description}
+              onChange={(e) =>
+                setEditedEvent({ ...editedEvent, description: e.target.value })
+              }
+              rows={8}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring font-mono"
             />
           </div>
 
