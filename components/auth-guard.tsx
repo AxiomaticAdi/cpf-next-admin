@@ -11,12 +11,15 @@ import { firebaseAuth } from "@/lib/firebase-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Home } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type AuthGuardProps = {
   children: ReactNode;
 };
 
 export function AuthGuard({ children }: AuthGuardProps) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -114,7 +117,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="flex justify-end p-4">
+      <div className="flex justify-end gap-2 p-4">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => router.push("/")}
+          aria-label="Go to home page"
+        >
+          <Home />
+        </Button>
         <Button variant="outline" onClick={handleSignOut}>
           Sign out
         </Button>
