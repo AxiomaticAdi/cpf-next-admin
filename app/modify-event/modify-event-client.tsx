@@ -49,6 +49,14 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     }
   };
 
+  const handleDiscard = () => {
+    const originalEvent = events.find((e) => e.id === selectedId);
+    if (originalEvent) {
+      setEditedEvent(originalEvent);
+      setSaveMessage(null);
+    }
+  };
+
   const handleSave = async () => {
     if (!editedEvent) return;
 
@@ -221,6 +229,14 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+
+            <button
+              onClick={handleDiscard}
+              disabled={isSaving}
+              className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Discard Changes
             </button>
 
             {saveMessage && (
