@@ -1,63 +1,45 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Timestamp } from "firebase-admin/firestore";
 import db from "@/firebase.config";
 import { Event } from "@/types";
 
-export type UpdateEventSoldResult = {
+export type UpdateEventResult = {
   success: boolean;
   error?: string;
 };
 
-// TODO: Currently only supports updating the sold tickets
-
 export async function updateEvent(
   eventId: string,
   updatedEvent: Event,
-): Promise<UpdateEventSoldResult> {
+): Promise<UpdateEventResult> {
   try {
     if (!eventId) {
       return { success: false, error: "Missing event identifier" };
-    }
-
-    const sold = updatedEvent.sold;
-
-    if (!Number.isFinite(sold)) {
-      return { success: false, error: "Sold must be a valid number" };
-    }
-
-    if (sold < 0) {
-      return {
-        success: false,
-        error: "Sold tickets cannot be negative",
-      };
     }
 
     const eventRef = db.collection("Events").doc(eventId);
     const eventSnapshot = await eventRef.get();
 
     if (!eventSnapshot.exists) {
-      return { success: false, error: "Event not found" };
+      return { success: false, error: `Event with ID ${eventId} not found` };
     }
 
-    const data = eventSnapshot.data();
-    const capacity = data?.Capacity;
+    // Convert Event type to FirebaseEventsDocument format
+    const firebaseEvent = {
+      EventId: updatedEvent.id,
+      Name: updatedEvent.name,
+      Description: updatedEvent.description,
+      ImageUrl: updatedEvent.imageUrl,
+      StartDateTime: Timestamp.fromDate(updatedEvent.startTime),
+      EndDateTime: Timestamp.fromDate(updatedEvent.endTime),
+      Capacity: updatedEvent.capacity,
+      Sold: updatedEvent.sold,
+      Price: updatedEvent.price,
+    };
 
-    if (typeof capacity !== "number") {
-      return {
-        success: false,
-        error: "Event capacity is invalid",
-      };
-    }
-
-    if (sold > capacity) {
-      return {
-        success: false,
-        error: "Sold tickets cannot exceed capacity",
-      };
-    }
-
-    await eventRef.update({ Sold: sold });
+    await eventRef.update(firebaseEvent);
 
     revalidatePath("/");
     revalidatePath("/events");
@@ -65,10 +47,10 @@ export async function updateEvent(
 
     return { success: true };
   } catch (error) {
-    console.error("Error updating sold tickets:", error);
+    console.error("Error updating event:", error);
     return {
       success: false,
-      error: "Failed to update sold tickets",
+      error: "Failed to update event",
     };
   }
 }
