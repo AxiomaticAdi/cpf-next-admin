@@ -119,4 +119,28 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .toast-success {
+    background-color: oklch(0.6 0.15 145) !important;
+    color: white !important;
+    border-color: oklch(0.5 0.15 145) !important;
+  }
+
+  .toast-error {
+    background-color: oklch(0.577 0.245 27.325) !important;
+    color: white !important;
+    border-color: oklch(0.477 0.245 27.325) !important;
+  }
+
+  .dark .toast-success {
+    background-color: oklch(0.5 0.15 145) !important;
+    color: white !important;
+    border-color: oklch(0.6 0.15 145) !important;
+  }
+
+  .dark .toast-error {
+    background-color: oklch(0.577 0.245 27.325) !important;
+    color: white !important;
+    border-color: oklch(0.677 0.245 27.325) !important;
+  }
 }
