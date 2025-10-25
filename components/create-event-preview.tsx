@@ -1,4 +1,5 @@
 import DOMPurify from "dompurify";
+import Image from "next/image";
 import BadgePrice from "./badge-price";
 import { SALES_TAX } from "@/lib/constants";
 
@@ -35,7 +36,7 @@ export default function EventDetailsSection({
     <div className="flex flex-col items-center">
       <div className="w-80 sm:w-96 h-60 rounded-md relative">
         {formData.imageUrl && (
-          <img src={formData.imageUrl} alt={formData.name} className="w-full h-full object-cover rounded-md" />
+          <Image src={formData.imageUrl} alt={formData.name} fill className="object-cover rounded-md" />
         )}
         {formData.price && <BadgePrice price={finalPrice} />}
       </div>

@@ -1,6 +1,7 @@
 import admin from "firebase-admin";
 
 // Initialize Firebase Admin
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const serviceAccount = require("./firebase-admin-key.json");
 
 // Initialize the app with a service account, granting admin privileges

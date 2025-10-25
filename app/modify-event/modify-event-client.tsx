@@ -64,7 +64,9 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     if (result.success) {
       toast.success("Changes saved successfully!");
     } else {
-      toast.error(`Failed to save changes${result.error ? `: ${result.error}` : ""}`);
+      toast.error(
+        `Failed to save changes${result.error ? `: ${result.error}` : ""}`,
+      );
     }
   };
 
@@ -176,7 +178,9 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               </dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
-              <dt className="font-medium text-muted-foreground">Price</dt>
+              <dt className="font-medium text-muted-foreground">
+                Price, including sales tax
+              </dt>
               <dd>
                 <input
                   type="number"
