@@ -8,12 +8,15 @@ type ModifyEventClientProps = {
   events: Event[];
 };
 
-function formatDate(value: Date | string) {
-  // Ensure consistent formatting whether we receive a Date or ISO string.
-  return new Date(value).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+function formatDateTimeLocal(date: Date | string): string {
+  // Convert Date to YYYY-MM-DDTHH:MM format for datetime-local input
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 export function ModifyEventClient({ events }: ModifyEventClientProps) {
@@ -100,11 +103,35 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
           <dl className="mt-4 space-y-2 text-sm">
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Starts</dt>
-              <dd>{formatDate(editedEvent.startTime)}</dd>
+              <dd>
+                <input
+                  type="datetime-local"
+                  value={formatDateTimeLocal(editedEvent.startTime)}
+                  onChange={(e) =>
+                    setEditedEvent({
+                      ...editedEvent,
+                      startTime: new Date(e.target.value),
+                    })
+                  }
+                  className="rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Ends</dt>
-              <dd>{formatDate(editedEvent.endTime)}</dd>
+              <dd>
+                <input
+                  type="datetime-local"
+                  value={formatDateTimeLocal(editedEvent.endTime)}
+                  onChange={(e) =>
+                    setEditedEvent({
+                      ...editedEvent,
+                      endTime: new Date(e.target.value),
+                    })
+                  }
+                  className="rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Sold</dt>
