@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Event } from "@/types";
 import { updateEvent } from "@/lib/actions/update-event";
 
@@ -16,45 +16,34 @@ function formatDate(value: Date | string) {
   });
 }
 
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-}
-
 export function ModifyEventClient({ events }: ModifyEventClientProps) {
   const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");
-  const [soldTickets, setSoldTickets] = useState<number>(0);
+  const [editedEvent, setEditedEvent] = useState<Event | null>(
+    () => events[0] ?? null,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
-  const selectedEvent = useMemo(
-    () => events.find((event) => event.id === selectedId),
-    [events, selectedId],
-  );
-
-  // Update soldTickets when selectedEvent changes
-  useMemo(() => {
-    if (selectedEvent) {
-      setSoldTickets(selectedEvent.sold);
+  // Update editedEvent when selectedId changes
+  const handleEventSelect = (eventId: string) => {
+    const event = events.find((e) => e.id === eventId);
+    if (event) {
+      setSelectedId(eventId);
+      setEditedEvent(event);
       setSaveMessage(null);
     }
-  }, [selectedEvent]);
+  };
 
   const handleSave = async () => {
-    if (!selectedEvent) return;
+    if (!editedEvent) return;
 
     setIsSaving(true);
     setSaveMessage(null);
 
-    const result = await updateEvent(selectedId, {
-      ...selectedEvent,
-      sold: soldTickets,
-    });
+    const result = await updateEvent(selectedId, editedEvent);
 
     setIsSaving(false);
 
@@ -94,7 +83,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
         <select
           id="event-select"
           value={selectedId}
-          onChange={(event) => setSelectedId(event.target.value)}
+          onChange={(e) => handleEventSelect(e.target.value)}
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
         >
           {events.map((event) => (
@@ -105,25 +94,27 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
         </select>
       </div>
 
-      {selectedEvent ? (
+      {editedEvent ? (
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-          <h2 className="text-xl font-semibold">{selectedEvent.name}</h2>
+          <h2 className="text-xl font-semibold">{editedEvent.name}</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Starts</dt>
-              <dd>{formatDate(selectedEvent.startTime)}</dd>
+              <dd>{formatDate(editedEvent.startTime)}</dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Ends</dt>
-              <dd>{formatDate(selectedEvent.endTime)}</dd>
+              <dd>{formatDate(editedEvent.endTime)}</dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Sold</dt>
               <dd>
                 <input
                   type="number"
-                  value={soldTickets}
-                  onChange={(e) => setSoldTickets(Number(e.target.value))}
+                  value={editedEvent.sold}
+                  onChange={(e) =>
+                    setEditedEvent({ ...editedEvent, sold: Number(e.target.value) })
+                  }
                   min={0}
                   className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
@@ -131,11 +122,35 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Capacity</dt>
-              <dd> {selectedEvent.capacity}</dd>
+              <dd>
+                <input
+                  type="number"
+                  value={editedEvent.capacity}
+                  onChange={(e) =>
+                    setEditedEvent({
+                      ...editedEvent,
+                      capacity: Number(e.target.value),
+                    })
+                  }
+                  min={0}
+                  className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">Price</dt>
-              <dd>{formatCurrency(selectedEvent.price)}</dd>
+              <dd>
+                <input
+                  type="number"
+                  value={editedEvent.price}
+                  onChange={(e) =>
+                    setEditedEvent({ ...editedEvent, price: Number(e.target.value) })
+                  }
+                  min={0}
+                  step={0.01}
+                  className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </dd>
             </div>
           </dl>
 
@@ -145,7 +160,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
             </span>
             <div
               className="rounded-md border border-border bg-background/50 px-4 py-3 text-sm prose text-left"
-              dangerouslySetInnerHTML={{ __html: selectedEvent.description }}
+              dangerouslySetInnerHTML={{ __html: editedEvent.description }}
             />
           </div>
 
