@@ -12,6 +12,9 @@ export default function Home() {
         <Button asChild>
           <Link href="/modify-event">Modify Event</Link>
         </Button>
+        <Button asChild>
+          <Link href="/delete-event">Delete Event</Link>
+        </Button>
       </div>
     </div>
   );
