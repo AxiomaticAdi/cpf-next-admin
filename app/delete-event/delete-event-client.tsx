@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Event } from "@/types";
 import { Button } from "../../components/ui/button";
+import { deleteEvent } from "@/lib/actions/delete-event";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type DeleteEventClientProps = {
   events: Event[];
@@ -18,11 +21,13 @@ function formatDateOnly(date: Date | string): string {
 }
 
 export function DeleteEventClient({ events }: DeleteEventClientProps) {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(
     () => events[0] ?? null,
   );
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Update selectedEvent when selectedId changes
   const handleEventSelect = (eventId: string) => {
@@ -38,10 +43,26 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
     setShowConfirmation(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (!selectedId) return;
-    console.log("Delete event with ID:", selectedId);
-    setShowConfirmation(false);
+  const handleConfirmDelete = async () => {
+    if (!selectedId || isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      const result = await deleteEvent(selectedId);
+
+      if (result.success) {
+        toast.success("Event deleted successfully");
+        setShowConfirmation(false);
+        router.refresh();
+      } else {
+        toast.error(result.error || "Failed to delete event");
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("An unexpected error occurred while deleting the event");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (!events.length) {
@@ -64,8 +85,15 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
       <div className="max-w-xl space-y-4">
         <label htmlFor="event-select" className="block text-sm font-medium">
           Select an event to delete.
-          <br /> Note that only future events can be deleted. Please contact Adi
-          to delete past events.
+          <ul className="list-disc list-outside ml-4 space-y-1 mt-2">
+            <li>
+              Note that only future events can be deleted. Please contact Adi to
+              delete past events.
+            </li>
+            <li>
+              Event deletion cannot be reversed, and the data is lost forever.
+            </li>
+          </ul>
         </label>
         <select
           id="event-select"
@@ -108,7 +136,11 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
           </dl>
 
           <div className="mt-6 space-y-3">
-            <Button variant="destructive" onClick={handleInitialDelete}>
+            <Button
+              variant="destructive"
+              onClick={handleInitialDelete}
+              disabled={isDeleting}
+            >
               Delete Event
             </Button>
 
@@ -119,12 +151,17 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
                   and the data is lost forever.
                 </p>
                 <div className="flex gap-2">
-                  <Button variant="destructive" onClick={handleConfirmDelete}>
-                    Yes, Delete Permanently
+                  <Button
+                    variant="destructive"
+                    onClick={handleConfirmDelete}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Yes, Delete Permanently"}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => setShowConfirmation(false)}
+                    disabled={isDeleting}
                   >
                     Cancel
                   </Button>

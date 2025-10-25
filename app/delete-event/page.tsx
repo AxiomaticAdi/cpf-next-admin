@@ -6,7 +6,7 @@ export default async function DeleteEventPage() {
   const futureEvents = events.filter((event) => event.endTime > new Date());
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl justify-center px-4">
+    <div className="mx-auto flex w-full max-w-xl justify-center px-4">
       <DeleteEventClient events={futureEvents} />
     </div>
   );
