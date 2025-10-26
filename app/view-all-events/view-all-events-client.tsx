@@ -2,30 +2,11 @@
 
 import { useState } from "react";
 import { Event } from "@/types";
+import { formatDateTimeLocal, formatDateOnly } from "@/lib/utils";
 
 type ViewAllEventsClientProps = {
   events: Event[];
 };
-
-function formatDateTimeLocal(date: Date | string): string {
-  // Convert Date to YYYY-MM-DDTHH:MM format for datetime-local input
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  const hours = String(d.getHours()).padStart(2, "0");
-  const minutes = String(d.getMinutes()).padStart(2, "0");
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
-}
-
-function formatDateOnly(date: Date | string): string {
-  // Convert Date to a readable date format like "Jan 15, 2025"
-  const d = new Date(date);
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
 
 export function ViewAllEventsClient({ events }: ViewAllEventsClientProps) {
   const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");

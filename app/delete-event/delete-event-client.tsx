@@ -6,19 +6,11 @@ import { Button } from "../../components/ui/button";
 import { deleteEvent } from "@/lib/actions/delete-event";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { formatDateOnly } from "@/lib/utils";
 
 type DeleteEventClientProps = {
   events: Event[];
 };
-
-function formatDateOnly(date: Date | string): string {
-  // Convert Date to a readable date format like "Jan 15, 2025"
-  const d = new Date(date);
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
 
 export function DeleteEventClient({ events }: DeleteEventClientProps) {
   const router = useRouter();
