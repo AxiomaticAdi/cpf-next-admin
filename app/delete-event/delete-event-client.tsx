@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Event } from "@/types";
 import { Button } from "../../components/ui/button";
 import { deleteEvent } from "@/lib/actions/delete-event";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
@@ -14,7 +13,6 @@ type DeleteEventClientProps = {
 };
 
 export function DeleteEventClient({ events }: DeleteEventClientProps) {
-  const router = useRouter();
   const { selectedId, selectedEvent, handleEventSelect } =
     useEventSelector(events);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -40,13 +38,15 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
       if (result.success) {
         toast.success("Event deleted successfully");
         setShowConfirmation(false);
-        router.refresh();
+        window.location.reload();
       } else {
-        toast.error(result.error || "Failed to delete event");
+        toast.error(`Failed to delete event: ${result.error}`);
       }
     } catch (error) {
       console.error("Error deleting event:", error);
-      toast.error("An unexpected error occurred while deleting the event");
+      toast.error(
+        `An unexpected error occurred while deleting the event: ${error}`,
+      );
     } finally {
       setIsDeleting(false);
     }
