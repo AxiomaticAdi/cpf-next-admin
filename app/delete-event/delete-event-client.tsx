@@ -6,7 +6,8 @@ import { Button } from "../../components/ui/button";
 import { deleteEvent } from "@/lib/actions/delete-event";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { formatDateOnly } from "@/lib/utils";
+import { useEventSelector } from "@/lib/hooks/use-event-selector";
+import { EventSelector } from "@/components/event-selector";
 
 type DeleteEventClientProps = {
   events: Event[];
@@ -14,21 +15,15 @@ type DeleteEventClientProps = {
 
 export function DeleteEventClient({ events }: DeleteEventClientProps) {
   const router = useRouter();
-  const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(
-    () => events[0] ?? null,
-  );
+  const { selectedId, selectedEvent, handleEventSelect } =
+    useEventSelector(events);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Update selectedEvent when selectedId changes
-  const handleEventSelect = (eventId: string) => {
-    const event = events.find((e) => e.id === eventId);
-    if (event) {
-      setSelectedId(eventId);
-      setSelectedEvent(event);
-      setShowConfirmation(false); // Reset confirmation when changing events
-    }
+  // Wrap the hook's handleEventSelect to reset confirmation when changing events
+  const handleEventSelectWithReset = (eventId: string) => {
+    handleEventSelect(eventId);
+    setShowConfirmation(false);
   };
 
   const handleInitialDelete = () => {
@@ -74,32 +69,25 @@ export function DeleteEventClient({ events }: DeleteEventClientProps) {
     <div className="flex flex-col gap-8 pt-10">
       <div className="text-2xl font-bold">Delete Event</div>
 
-      <div className="max-w-xl space-y-4">
-        <label htmlFor="event-select" className="block text-sm font-medium">
-          Select an event to delete.
-          <ul className="list-disc list-outside ml-4 space-y-1 mt-2">
-            <li>
-              Note that only future events can be deleted. Please contact Adi to
-              delete past events.
-            </li>
-            <li>
-              Event deletion cannot be reversed, and the data is lost forever.
-            </li>
-          </ul>
-        </label>
-        <select
-          id="event-select"
-          value={selectedId}
-          onChange={(e) => handleEventSelect(e.target.value)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          {events.map((event) => (
-            <option key={event.id} value={event.id}>
-              {event.name} ({formatDateOnly(event.startTime)})
-            </option>
-          ))}
-        </select>
-      </div>
+      <EventSelector
+        events={events}
+        selectedId={selectedId}
+        onEventSelect={handleEventSelectWithReset}
+        label={
+          <>
+            Select an event to delete.
+            <ul className="list-disc list-outside ml-4 space-y-1 mt-2">
+              <li>
+                Note that only future events can be deleted. Please contact Adi
+                to delete past events.
+              </li>
+              <li>
+                Event deletion cannot be reversed, and the data is lost forever.
+              </li>
+            </ul>
+          </>
+        }
+      />
 
       {selectedEvent ? (
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">

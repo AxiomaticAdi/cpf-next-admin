@@ -4,27 +4,22 @@ import { useState } from "react";
 import { Event } from "@/types";
 import { updateEvent } from "@/lib/actions/update-event";
 import { toast } from "sonner";
-import { formatDateTimeLocal, formatDateOnly } from "@/lib/utils";
+import { formatDateTimeLocal } from "@/lib/utils";
+import { useEventSelector } from "@/lib/hooks/use-event-selector";
+import { EventSelector } from "@/components/event-selector";
 
 type ModifyEventClientProps = {
   events: Event[];
 };
 
 export function ModifyEventClient({ events }: ModifyEventClientProps) {
-  const [selectedId, setSelectedId] = useState(() => events[0]?.id ?? "");
-  const [editedEvent, setEditedEvent] = useState<Event | null>(
-    () => events[0] ?? null,
-  );
+  const { selectedId, selectedEvent, handleEventSelect, setSelectedEvent } =
+    useEventSelector(events);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Update editedEvent when selectedId changes
-  const handleEventSelect = (eventId: string) => {
-    const event = events.find((e) => e.id === eventId);
-    if (event) {
-      setSelectedId(eventId);
-      setEditedEvent(event);
-    }
-  };
+  // Use selectedEvent as editedEvent (renaming for clarity in this context)
+  const editedEvent = selectedEvent;
+  const setEditedEvent = setSelectedEvent;
 
   const handleDiscard = () => {
     const originalEvent = events.find((e) => e.id === selectedId);
@@ -68,25 +63,18 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
     <div className="flex flex-col gap-8 pt-10">
       <div className="text-2xl font-bold">Modify Event</div>
 
-      <div className="max-w-xl space-y-4">
-        <label htmlFor="event-select" className="block text-sm font-medium">
-          Select an event to view or edit details.
-          <br /> Note that only future events can be modified. Please contact
-          Adi to modify past events.
-        </label>
-        <select
-          id="event-select"
-          value={selectedId}
-          onChange={(e) => handleEventSelect(e.target.value)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          {events.map((event) => (
-            <option key={event.id} value={event.id}>
-              {event.name} ({formatDateOnly(event.startTime)})
-            </option>
-          ))}
-        </select>
-      </div>
+      <EventSelector
+        events={events}
+        selectedId={selectedId}
+        onEventSelect={handleEventSelect}
+        label={
+          <>
+            Select an event to view or edit details.
+            <br /> Note that only future events can be modified. Please contact
+            Adi to modify past events.
+          </>
+        }
+      />
 
       {editedEvent ? (
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
