@@ -18,7 +18,7 @@ import { SALES_TAX } from "@/lib/constants";
 import { toast } from "sonner";
 import EventDetailsSection from "./create-event-preview";
 
-export function CreateEventForm() {
+export function CreateEventClient() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -84,6 +84,17 @@ export function CreateEventForm() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create New Event</h1>
+      <div className="block text-sm font-medium my-6">
+        <ul className="list-disc list-outside ml-4 space-y-1">
+          <li>
+            Note that only future events can be created. Please contact Adi to
+            create past events.
+          </li>
+          <li>
+            Event creation cannot be reversed, and the data is lost forever.
+          </li>
+        </ul>
+      </div>
 
       <form onSubmit={handlePreview} className="space-y-6">
         <div className="space-y-2">

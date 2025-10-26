@@ -73,6 +73,13 @@ export async function validateEvent(
     if (event.endTime <= event.startTime) {
       errors.push("End time must be after start time");
     }
+
+    const now = new Date();
+    if (event.startTime <= now || event.endTime <= now) {
+      errors.push(
+        "Start time and end time must be in the future for an event to be created or modified",
+      );
+    }
   }
 
   return {

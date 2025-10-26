@@ -1,6 +1,6 @@
 import DOMPurify from "dompurify";
 import Image from "next/image";
-import BadgePrice from "./badge-price";
+import BadgePrice from "@/components/badge-price";
 import { SALES_TAX } from "@/lib/constants";
 
 interface EventFormData {
@@ -36,12 +36,19 @@ export default function EventDetailsSection({
     <div className="flex flex-col items-center">
       <div className="w-80 sm:w-96 h-60 rounded-md relative">
         {formData.imageUrl && (
-          <Image src={formData.imageUrl} alt={formData.name} fill className="object-cover rounded-md" />
+          <Image
+            src={formData.imageUrl}
+            alt={formData.name}
+            fill
+            className="object-cover rounded-md"
+          />
         )}
         {formData.price && <BadgePrice price={finalPrice} />}
       </div>
 
-      <h1 className="text-xl font-bold my-4">{formData.name || "Event Name"}</h1>
+      <h1 className="text-xl font-bold my-4">
+        {formData.name || "Event Name"}
+      </h1>
 
       {/* Optionally include event description as sanitized HTML */}
       {includeDetails && (
