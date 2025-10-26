@@ -91,7 +91,8 @@ export function CreateEventClient() {
             create past events.
           </li>
           <li>
-            Event creation cannot be reversed, and the data is lost forever.
+            Note that events will not display on the website if they have zero
+            tickets sold and start within 48 hours.
           </li>
         </ul>
       </div>
