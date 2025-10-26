@@ -14,12 +14,12 @@ function loadServiceAccount() {
     ? Buffer.from(raw, "base64").toString("utf8")
     : raw;
 
-  let sa: Record<string, any>;
+  let sa: Record<string, unknown>;
   try {
     sa = JSON.parse(maybeDecoded);
-  } catch (e) {
+  } catch (error) {
     throw new Error(
-      "GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON (after optional base64 decode).",
+      `GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON (after optional base64 decode). Error: ${error}`,
     );
   }
 

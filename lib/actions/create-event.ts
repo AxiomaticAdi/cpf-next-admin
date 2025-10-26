@@ -59,7 +59,9 @@ export async function createEvent(formData: CreateEventFormData) {
     // Validate the event data
     const validationResult = await validateEvent(eventToValidate);
     if (!validationResult.isValid) {
-      throw new Error(validationResult.errors?.join(", ") || "Invalid event data");
+      throw new Error(
+        validationResult.errors?.join(", ") || "Invalid event data",
+      );
     }
 
     // Convert datetime strings to Firebase Timestamps

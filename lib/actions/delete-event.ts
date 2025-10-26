@@ -8,9 +8,7 @@ export type DeleteEventResult = {
   error?: string;
 };
 
-export async function deleteEvent(
-  eventId: string,
-): Promise<DeleteEventResult> {
+export async function deleteEvent(eventId: string): Promise<DeleteEventResult> {
   try {
     if (!eventId) {
       return { success: false, error: "Missing event identifier" };
