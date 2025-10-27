@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier . --write",
-    "fix-all": "eslint . --fix && prettier . --write"
+    "fix-all": "prettier . --write && eslint . --fix"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.3",

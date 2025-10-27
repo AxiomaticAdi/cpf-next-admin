@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Event } from "@/types";
 import { formatDateTimeLocal, formatDateOnly } from "@/lib/utils";
 
@@ -112,11 +113,15 @@ export function ViewAllEventsClient({ events }: ViewAllEventsClientProps) {
               <div className="text-sm font-medium text-muted-foreground">
                 Event Image
               </div>
-              <img
-                src={selectedEvent.imageUrl}
-                alt={selectedEvent.name}
-                className="w-full rounded-md border border-input"
-              />
+              <div className="w-full flex justify-center">
+                <Image
+                  src={selectedEvent.imageUrl}
+                  alt={selectedEvent.name}
+                  width={400}
+                  height={400}
+                  className="rounded-md border border-input"
+                />
+              </div>
             </div>
           )}
         </div>
