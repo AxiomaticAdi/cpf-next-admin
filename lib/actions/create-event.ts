@@ -6,6 +6,7 @@ import db from "@/firebase.config";
 import { FirebaseEventsDocument, Event } from "@/types";
 import { SALES_TAX } from "@/lib/constants";
 import { validateEvent } from "./validate-event";
+import { parseDateTimeLocalAsCA } from "@/lib/utils";
 
 export type CreateEventFormData = {
   name: string;
@@ -44,13 +45,14 @@ export async function createEvent(formData: CreateEventFormData) {
       : basePrice;
 
     // Create Event object for validation
+    // Parse datetime strings as California timezone
     const eventToValidate: Event = {
       id: "temp-id", // Temporary ID for validation
       name: formData.name.trim(),
       description: formData.description.trim(),
       imageUrl: formData.imageUrl.trim(),
-      startTime: new Date(formData.startDateTime),
-      endTime: new Date(formData.endDateTime),
+      startTime: parseDateTimeLocalAsCA(formData.startDateTime),
+      endTime: parseDateTimeLocalAsCA(formData.endDateTime),
       capacity: capacity,
       sold: sold,
       price: Math.round(finalPrice * 100) / 100,
@@ -82,9 +84,6 @@ export async function createEvent(formData: CreateEventFormData) {
 
     // Add document to Firestore Events collection
     const docRef = await db.collection("Events").add(eventData);
-
-    // Update the document with its auto-generated ID as EventId
-    await docRef.update({ EventId: docRef.id });
 
     // Revalidate any cached pages that might display events
     revalidatePath("/");

@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Event } from "@/types";
 import { updateEvent } from "@/lib/actions/update-event";
 import { toast } from "sonner";
-import { formatDateTimeLocal } from "@/lib/utils";
+import {
+  formatDateTimeLocalCA,
+  parseDateTimeLocalAsCA,
+} from "@/lib/utils";
 import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
 
@@ -85,11 +88,11 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               <dd>
                 <input
                   type="datetime-local"
-                  value={formatDateTimeLocal(editedEvent.startTime)}
+                  value={formatDateTimeLocalCA(editedEvent.startTime)}
                   onChange={(e) =>
                     setEditedEvent({
                       ...editedEvent,
-                      startTime: new Date(e.target.value),
+                      startTime: parseDateTimeLocalAsCA(e.target.value),
                     })
                   }
                   className="rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -101,11 +104,11 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               <dd>
                 <input
                   type="datetime-local"
-                  value={formatDateTimeLocal(editedEvent.endTime)}
+                  value={formatDateTimeLocalCA(editedEvent.endTime)}
                   onChange={(e) =>
                     setEditedEvent({
                       ...editedEvent,
-                      endTime: new Date(e.target.value),
+                      endTime: parseDateTimeLocalAsCA(e.target.value),
                     })
                   }
                   className="rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
