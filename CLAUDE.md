@@ -51,6 +51,7 @@ types.ts                        # FirebaseEventsDocument, Event types
 ### Server/Client Split
 
 Every route page follows the same pattern:
+
 - `page.tsx` — async server component that fetches data from Firestore via Firebase Admin SDK
 - `*-client.tsx` — co-located `"use client"` component that receives data as props and handles interactivity
 
@@ -86,6 +87,7 @@ All server actions live in `lib/actions/` and return `{ success: boolean, error?
 ### Timezone Handling
 
 All datetime inputs are treated as California time (`America/Los_Angeles`). Key utilities in `lib/utils.ts`:
+
 - `formatDateTimeLocalCA()` — formats Date to datetime-local string in CA timezone
 - `parseDateTimeLocalAsCA()` — parses datetime-local string as CA time, returns UTC Date
 - Server actions convert to/from Firebase Timestamps in UTC
@@ -105,6 +107,7 @@ All datetime inputs are treated as California time (`America/Los_Angeles`). Key 
 ## Environment Variables
 
 Required in `.env`:
+
 - `NEXT_PUBLIC_FIREBASE_API_KEY` — Firebase client API key
 - `NEXT_PUBLIC_FIREBASE_APP_ID` — Firebase app ID
 - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` — Firebase auth domain
@@ -115,16 +118,16 @@ Required in `.env`:
 
 ## Key Dependencies
 
-| Package | Purpose |
-|---|---|
-| `firebase` ^12 | Client-side Auth |
-| `firebase-admin` ^13 | Server-side Firestore access |
-| `lucide-react` | Icons |
-| `sonner` | Toast notifications |
-| `dompurify` | HTML sanitization for event descriptions |
-| `next-themes` | Theme provider (forced light mode) |
-| `class-variance-authority` | Component variant styling |
-| `@radix-ui/*` | UI primitives for shadcn components |
+| Package                    | Purpose                                  |
+| -------------------------- | ---------------------------------------- |
+| `firebase` ^12             | Client-side Auth                         |
+| `firebase-admin` ^13       | Server-side Firestore access             |
+| `lucide-react`             | Icons                                    |
+| `sonner`                   | Toast notifications                      |
+| `dompurify`                | HTML sanitization for event descriptions |
+| `next-themes`              | Theme provider (forced light mode)       |
+| `class-variance-authority` | Component variant styling                |
+| `@radix-ui/*`              | UI primitives for shadcn components      |
 
 ## Linting & Formatting
 

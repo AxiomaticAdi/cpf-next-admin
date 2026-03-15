@@ -4,10 +4,7 @@ import { useState } from "react";
 import { Event } from "@/types";
 import { updateEvent } from "@/lib/actions/update-event";
 import { toast } from "sonner";
-import {
-  formatDateTimeLocalCA,
-  parseDateTimeLocalAsCA,
-} from "@/lib/utils";
+import { formatDateTimeLocalCA, parseDateTimeLocalAsCA } from "@/lib/utils";
 import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
 

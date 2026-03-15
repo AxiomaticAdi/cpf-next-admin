@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DOMPurify from "dompurify";
 import Image from "next/image";
 import { Event } from "@/types";
 import { formatDateTimeLocal, formatDateOnly } from "@/lib/utils";
@@ -103,8 +104,10 @@ export function ViewAllEventsClient({ events }: ViewAllEventsClientProps) {
               Description (formatted)
             </div>
             <div
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-              dangerouslySetInnerHTML={{ __html: selectedEvent.description }}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(selectedEvent.description),
+              }}
             />
           </div>
 
