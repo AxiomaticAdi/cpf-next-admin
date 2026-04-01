@@ -5,7 +5,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { uploadImage } from "@/lib/actions/upload-image";
-import { Upload, X, RefreshCw, Loader2, Link } from "lucide-react";
+import { Upload, X, RefreshCw, Loader2, Link, ImageIcon } from "lucide-react";
+import { ImagePickerDialog } from "@/components/image-picker-dialog";
 
 type ImageUploadProps = {
   value: string;
@@ -24,6 +25,7 @@ export function ImageUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,6 +131,15 @@ export function ImageUpload({
             type="button"
             variant="outline"
             size="sm"
+            onClick={() => setShowPicker(true)}
+          >
+            <ImageIcon className="mr-1.5 h-3.5 w-3.5" />
+            Browse existing
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={handleRemove}
           >
             <X className="mr-1.5 h-3.5 w-3.5" />
@@ -142,6 +153,16 @@ export function ImageUpload({
           onChange={handleFileSelect}
           className="hidden"
         />
+        <ImagePickerDialog
+          open={showPicker}
+          onOpenChange={setShowPicker}
+          onSelect={(url) => {
+            onChange(url);
+            setError(null);
+          }}
+          currentUrl={value}
+          folder={folder}
+        />
       </div>
     );
   }
@@ -149,9 +170,7 @@ export function ImageUpload({
   // Empty state
   return (
     <div className="space-y-2">
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <div
         className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-border p-6 transition-colors hover:border-primary/50 hover:bg-muted/50"
         onClick={() => fileInputRef.current?.click()}
@@ -169,31 +188,52 @@ export function ImageUpload({
         onChange={handleFileSelect}
         className="hidden"
       />
-      {showUrlInput ? (
-        <div className="flex gap-2">
-          <Input
-            type="url"
-            placeholder="https://example.com/image.jpg"
-            onBlur={handleUrlBlur}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                e.currentTarget.blur();
-              }
-            }}
-            autoFocus
-          />
-        </div>
-      ) : (
+      <div className="flex items-center gap-3">
         <button
           type="button"
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-          onClick={() => setShowUrlInput(true)}
+          onClick={() => setShowPicker(true)}
         >
-          <Link className="h-3 w-3" />
-          Or paste image URL
+          <ImageIcon className="h-3 w-3" />
+          Browse existing
         </button>
-      )}
+        {showUrlInput ? (
+          <div className="flex-1">
+            <Input
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              onBlur={handleUrlBlur}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.currentTarget.blur();
+                }
+              }}
+              autoFocus
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => setShowUrlInput(true)}
+          >
+            <Link className="h-3 w-3" />
+            Or paste image URL
+          </button>
+        )}
+      </div>
+      <ImagePickerDialog
+        open={showPicker}
+        onOpenChange={setShowPicker}
+        onSelect={(url) => {
+          onChange(url);
+          setShowUrlInput(false);
+          setError(null);
+        }}
+        currentUrl={value}
+        folder={folder}
+      />
     </div>
   );
 }
