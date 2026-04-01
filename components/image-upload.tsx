@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { uploadImage } from "@/lib/actions/upload-image";
-import { Upload, X, RefreshCw, Loader2, Link, ImageIcon } from "lucide-react";
+import { Upload, X, Loader2, Link, ImageIcon } from "lucide-react";
 import { ImagePickerDialog } from "@/components/image-picker-dialog";
 
 type ImageUploadProps = {
@@ -73,10 +73,6 @@ export function ImageUpload({
     setShowUrlInput(false);
   };
 
-  const handleReplace = () => {
-    fileInputRef.current?.click();
-  };
-
   const handleUrlBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const url = e.target.value.trim();
     if (url) {
@@ -117,52 +113,15 @@ export function ImageUpload({
             unoptimized
           />
         </div>
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleReplace}
-          >
-            <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-            Replace
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPicker(true)}
-          >
-            <ImageIcon className="mr-1.5 h-3.5 w-3.5" />
-            Browse existing
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleRemove}
-          >
-            <X className="mr-1.5 h-3.5 w-3.5" />
-            Remove
-          </Button>
-        </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-        <ImagePickerDialog
-          open={showPicker}
-          onOpenChange={setShowPicker}
-          onSelect={(url) => {
-            onChange(url);
-            setError(null);
-          }}
-          currentUrl={value}
-          folder={folder}
-        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleRemove}
+        >
+          <X className="mr-1.5 h-3.5 w-3.5" />
+          Remove / Replace Image
+        </Button>
       </div>
     );
   }

@@ -25,7 +25,12 @@ function buildThumbnailUrl(secureUrl: string): string {
   );
 }
 
-export async function listImages(folder: string = "CPF") {
+export async function listImages(
+  folder: string = "CPF",
+): Promise<
+  | { success: true; images: CloudinaryImage[] }
+  | { success: false; error: string }
+> {
   try {
     const result = await cloudinary.api.resources({
       type: "upload",
@@ -34,29 +39,26 @@ export async function listImages(folder: string = "CPF") {
       resource_type: "image",
     });
 
-    const images: CloudinaryImage[] = result.resources
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const resources = result.resources as any[];
+
+    const images: CloudinaryImage[] = resources
       .sort(
-        (a: { created_at: string }, b: { created_at: string }) =>
+        (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       )
-      .map(
-        (resource: {
-          secure_url: string;
-          public_id: string;
-          created_at: string;
-        }) => ({
-          url: resource.secure_url,
-          thumbnailUrl: buildThumbnailUrl(resource.secure_url),
-          publicId: resource.public_id,
-          createdAt: resource.created_at,
-        }),
-      );
+      .map((resource) => ({
+        url: String(resource.secure_url),
+        thumbnailUrl: buildThumbnailUrl(String(resource.secure_url)),
+        publicId: String(resource.public_id),
+        createdAt: String(resource.created_at),
+      }));
 
-    return { success: true as const, images };
+    return { success: true, images };
   } catch (error) {
     console.error("Error listing images:", error);
     return {
-      success: false as const,
+      success: false,
       error: "Failed to load images. Please try again.",
     };
   }
