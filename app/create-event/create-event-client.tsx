@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -124,15 +125,12 @@ export function CreateEventClient() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="imageUrl">Image URL</Label>
-          <Input
-            id="imageUrl"
-            name="imageUrl"
-            type="url"
+          <Label>Event Image</Label>
+          <ImageUpload
             value={formData.imageUrl}
-            onChange={handleInputChange}
-            placeholder="https://example.com/image.jpg"
-            required
+            onChange={(url) =>
+              setFormData((prev) => ({ ...prev, imageUrl: url }))
+            }
           />
         </div>
 

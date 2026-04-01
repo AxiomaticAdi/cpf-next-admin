@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { formatDateTimeLocalCA, parseDateTimeLocalAsCA } from "@/lib/utils";
 import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
+import { ImageUpload } from "@/components/image-upload";
 
 type ModifyEventClientProps = {
   events: Event[];
@@ -167,6 +168,18 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               </dd>
             </div>
           </dl>
+
+          <div className="mt-6 space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">
+              Event Image
+            </label>
+            <ImageUpload
+              value={editedEvent.imageUrl}
+              onChange={(url) =>
+                setEditedEvent({ ...editedEvent, imageUrl: url })
+              }
+            />
+          </div>
 
           <div className="mt-6 space-y-2">
             <label
