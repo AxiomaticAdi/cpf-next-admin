@@ -8,6 +8,7 @@ type EventSelectorProps = {
   onEventSelect: (eventId: string) => void;
   label: ReactNode;
   id?: string;
+  placeholder?: string;
 };
 
 export function EventSelector({
@@ -16,6 +17,7 @@ export function EventSelector({
   onEventSelect,
   label,
   id = "event-select",
+  placeholder,
 }: EventSelectorProps) {
   return (
     <div className="max-w-xl space-y-4">
@@ -28,6 +30,7 @@ export function EventSelector({
         onChange={(e) => onEventSelect(e.target.value)}
         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
       >
+        {placeholder && <option value="">{placeholder}</option>}
         {events.map((event) => (
           <option key={event.id} value={event.id}>
             {event.name} ({formatDateOnly(event.startTime)})

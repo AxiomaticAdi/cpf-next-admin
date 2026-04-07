@@ -17,9 +17,15 @@ import {
 import { createEvent } from "@/lib/actions/create-event";
 import { SALES_TAX } from "@/lib/constants";
 import { toast } from "sonner";
+import { EventSelector } from "@/components/event-selector";
+import { Event } from "@/types";
 import EventDetailsSection from "./create-event-preview";
 
-export function CreateEventClient() {
+type CreateEventClientProps = {
+  events?: Event[];
+};
+
+export function CreateEventClient({ events }: CreateEventClientProps) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -33,6 +39,44 @@ export function CreateEventClient() {
   const [addSalesTax, setAddSalesTax] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [copyFromId, setCopyFromId] = useState("");
+
+  const handleCopyFrom = (eventId: string) => {
+    setCopyFromId(eventId);
+
+    if (!eventId) {
+      setFormData({
+        name: "",
+        description: "",
+        imageUrl: "",
+        startDateTime: "",
+        endDateTime: "",
+        capacity: "",
+        price: "",
+      });
+      setAddSalesTax(true);
+      return;
+    }
+
+    const event = events?.find((e) => e.id === eventId);
+    if (!event) return;
+
+    const basePrice = event.price / (1 + SALES_TAX);
+    const basePriceStr = isNaN(basePrice) ? "" : basePrice.toFixed(2);
+
+    setFormData({
+      name: event.name,
+      description: event.description,
+      imageUrl: event.imageUrl,
+      startDateTime: "",
+      endDateTime: "",
+      capacity: String(event.capacity),
+      price: basePriceStr,
+    });
+    setAddSalesTax(true);
+
+    toast.info(`Prefilled from "${event.name}". Set your dates to continue.`);
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -97,6 +141,17 @@ export function CreateEventClient() {
           </li>
         </ul>
       </div>
+
+      {events && events.length > 0 && (
+        <EventSelector
+          events={events}
+          selectedId={copyFromId}
+          onEventSelect={handleCopyFrom}
+          label="Copy from existing event (optional)"
+          id="copy-from-event"
+          placeholder="(none)"
+        />
+      )}
 
       <form onSubmit={handlePreview} className="space-y-6">
         <div className="space-y-2">
