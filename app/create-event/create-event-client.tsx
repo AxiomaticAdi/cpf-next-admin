@@ -17,8 +17,11 @@ import {
 import { createEvent } from "@/lib/actions/create-event";
 import { SALES_TAX } from "@/lib/constants";
 import { toast } from "sonner";
-import { EventSelector } from "@/components/event-selector";
 import { Event } from "@/types";
+import { formatDateOnly } from "@/lib/utils";
+import { Copy, X } from "lucide-react";
+import Image from "next/image";
+import BadgePrice from "@/components/badge-price";
 import EventDetailsSection from "./create-event-preview";
 
 type CreateEventClientProps = {
@@ -39,10 +42,12 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
   const [addSalesTax, setAddSalesTax] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showCopyPicker, setShowCopyPicker] = useState(false);
   const [copyFromId, setCopyFromId] = useState("");
 
   const handleCopyFrom = (eventId: string) => {
     setCopyFromId(eventId);
+    setShowCopyPicker(false);
 
     if (!eventId) {
       setFormData({
@@ -77,6 +82,8 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
 
     toast.info(`Prefilled from "${event.name}". Set your dates to continue.`);
   };
+
+  const copiedEvent = events?.find((e) => e.id === copyFromId);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -142,17 +149,82 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
         </ul>
       </div>
 
+      {events && events.length > 0 && (
+        <div className="flex justify-center items-center gap-3 mb-6">
+          {copiedEvent ? (
+            <div className="flex items-center gap-2 rounded-md border border-input bg-muted px-3 py-2 text-sm">
+              <Copy className="h-4 w-4 text-muted-foreground" />
+              <span>
+                Copied from{" "}
+                <span className="font-medium">{copiedEvent.name}</span>
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => handleCopyFrom("")}
+                className="ml-1 h-5 w-5"
+              >
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowCopyPicker(true)}
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              OPTIONAL - duplicate existing event
+            </Button>
+          )}
+        </div>
+      )}
+
+      <Dialog open={showCopyPicker} onOpenChange={setShowCopyPicker}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Copy from existing event</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+            {events?.map((event) => (
+              <button
+                key={event.id}
+                type="button"
+                onClick={() => handleCopyFrom(event.id)}
+                className="group rounded-lg border border-input bg-card text-left shadow-sm transition-colors hover:border-primary hover:bg-accent overflow-hidden"
+              >
+                <div className="relative w-full h-36">
+                  {event.imageUrl ? (
+                    <Image
+                      src={event.imageUrl}
+                      alt={event.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
+                      No image
+                    </div>
+                  )}
+                  <BadgePrice price={event.price} />
+                </div>
+                <div className="p-3">
+                  <div className="font-semibold text-sm truncate">
+                    {event.name}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {formatDateOnly(event.startTime)} &middot; {event.capacity}{" "}
+                    spots
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <form onSubmit={handlePreview} className="space-y-6">
-        {events && events.length > 0 && (
-          <EventSelector
-            events={events}
-            selectedId={copyFromId}
-            onEventSelect={handleCopyFrom}
-            label="Copy from existing event (optional)"
-            id="copy-from-event"
-            placeholder="(none)"
-          />
-        )}
         <div className="space-y-2">
           <Label htmlFor="name">Event Name</Label>
           <Input

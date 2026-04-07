@@ -64,6 +64,7 @@ All server actions live in `lib/actions/` and return `{ success: boolean, error?
 ### Component Conventions
 
 - Use shadcn/ui components from `/components/ui/` — prefer these over raw HTML elements
+- **Never use raw `<button>` elements** — always use the shadcn `Button` component (with appropriate `variant` and `size`). The only exception is custom interactive card/tile layouts where `Button` styling would conflict.
 - Always use `next/image` for images, `next/link` for links, shadcn `Button` for buttons
 - Use the `cn()` utility from `/lib/utils.ts` for combining Tailwind classes
 - Components use Radix UI primitives with CVA (class-variance-authority) for variants
