@@ -130,6 +130,14 @@ Required in `.env`:
 | `class-variance-authority` | Component variant styling                |
 | `@radix-ui/*`              | UI primitives for shadcn components      |
 
+### PR Screenshots
+
+- Every page is behind `AuthGuard` (client-side Firebase Auth). Headless browsers must log in before screenshotting any route.
+- Sandbox credentials are in `.env` as `SANDBOX_EMAIL` and `SANDBOX_PASSWORD`.
+- Auth state lives in React memory, not cookies. A full page load (`$B goto`) to a different route resets it. After logging in on `/`, navigate by clicking links in the UI (e.g. `$B click 'text=Create Event'`), not by `$B goto /create-event`.
+- `.env` is gitignored. When creating a worktree for base-branch "before" screenshots, copy `.env` into it before starting the dev server.
+- Nav link text for routes: "Create Event", "Modify Event", "Delete Event", "View All Events"
+
 ## Linting & Formatting
 
 - ESLint 9 (flat config) with `next/core-web-vitals`, `next/typescript`, and Prettier integration
