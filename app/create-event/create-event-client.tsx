@@ -142,18 +142,17 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
         </ul>
       </div>
 
-      {events && events.length > 0 && (
-        <EventSelector
-          events={events}
-          selectedId={copyFromId}
-          onEventSelect={handleCopyFrom}
-          label="Copy from existing event (optional)"
-          id="copy-from-event"
-          placeholder="(none)"
-        />
-      )}
-
       <form onSubmit={handlePreview} className="space-y-6">
+        {events && events.length > 0 && (
+          <EventSelector
+            events={events}
+            selectedId={copyFromId}
+            onEventSelect={handleCopyFrom}
+            label="Copy from existing event (optional)"
+            id="copy-from-event"
+            placeholder="(none)"
+          />
+        )}
         <div className="space-y-2">
           <Label htmlFor="name">Event Name</Label>
           <Input
