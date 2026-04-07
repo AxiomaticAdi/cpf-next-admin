@@ -152,21 +152,27 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
       {events && events.length > 0 && (
         <div className="flex justify-center items-center gap-3 mb-6">
           {copiedEvent ? (
-            <div className="flex items-center gap-2 rounded-md border border-input bg-muted px-3 py-2 text-sm">
-              <Copy className="h-4 w-4 text-muted-foreground" />
-              <span>
-                Copied from{" "}
-                <span className="font-medium">{copiedEvent.name}</span>
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => handleCopyFrom("")}
-                className="ml-1 h-5 w-5"
-              >
-                <X className="h-3.5 w-3.5 text-muted-foreground" />
-              </Button>
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center gap-2 rounded-md border border-input bg-muted px-3 py-2 text-sm">
+                <Copy className="h-4 w-4 text-muted-foreground" />
+                <span>
+                  Copied from{" "}
+                  <span className="font-medium">{copiedEvent.name}</span>
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleCopyFrom("")}
+                  className="ml-1 h-5 w-5"
+                >
+                  <X className="h-3.5 w-3.5 text-muted-foreground" />
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Event details copied. Please add start and end date/time, then
+                confirm all details are correct.
+              </p>
             </div>
           ) : (
             <Button
