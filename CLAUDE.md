@@ -64,6 +64,7 @@ All server actions live in `lib/actions/` and return `{ success: boolean, error?
 ### Component Conventions
 
 - Use shadcn/ui components from `/components/ui/` — prefer these over raw HTML elements
+- **Never use raw `<button>` elements** — always use the shadcn `Button` component (with appropriate `variant` and `size`). The only exception is custom interactive card/tile layouts where `Button` styling would conflict.
 - Always use `next/image` for images, `next/link` for links, shadcn `Button` for buttons
 - Use the `cn()` utility from `/lib/utils.ts` for combining Tailwind classes
 - Components use Radix UI primitives with CVA (class-variance-authority) for variants
@@ -128,6 +129,14 @@ Required in `.env`:
 | `next-themes`              | Theme provider (forced light mode)       |
 | `class-variance-authority` | Component variant styling                |
 | `@radix-ui/*`              | UI primitives for shadcn components      |
+
+### PR Screenshots
+
+- Every page is behind `AuthGuard` (client-side Firebase Auth). Headless browsers must log in before screenshotting any route.
+- Sandbox credentials are in `.env` as `SANDBOX_EMAIL` and `SANDBOX_PASSWORD`.
+- Auth state lives in React memory, not cookies. A full page load (`$B goto`) to a different route resets it. After logging in on `/`, navigate by clicking links in the UI (e.g. `$B click 'text=Create Event'`), not by `$B goto /create-event`.
+- `.env` is gitignored. When creating a worktree for base-branch "before" screenshots, copy `.env` into it before starting the dev server.
+- Nav link text for routes: "Create Event", "Modify Event", "Delete Event", "View All Events"
 
 ## Linting & Formatting
 
