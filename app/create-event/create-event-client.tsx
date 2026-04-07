@@ -170,8 +170,8 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Event details copied. Please add start and end date/time, then
-                confirm all details are correct.
+                Event details prefilled — set new dates, modify as needed, and
+                review before submitting.
               </p>
             </div>
           ) : (
