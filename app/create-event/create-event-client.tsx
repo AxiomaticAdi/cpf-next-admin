@@ -19,7 +19,7 @@ import { SALES_TAX } from "@/lib/constants";
 import { toast } from "sonner";
 import { Event } from "@/types";
 import { formatDateOnly } from "@/lib/utils";
-import { Copy, X } from "lucide-react";
+import { Copy, Search, X } from "lucide-react";
 import Image from "next/image";
 import BadgePrice from "@/components/badge-price";
 import EventDetailsSection from "./create-event-preview";
@@ -44,6 +44,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [showCopyPicker, setShowCopyPicker] = useState(false);
   const [copyFromId, setCopyFromId] = useState("");
+  const [copySearch, setCopySearch] = useState("");
 
   const handleCopyFrom = (eventId: string) => {
     setCopyFromId(eventId);
@@ -187,45 +188,64 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
         </div>
       )}
 
-      <Dialog open={showCopyPicker} onOpenChange={setShowCopyPicker}>
+      <Dialog
+        open={showCopyPicker}
+        onOpenChange={(open) => {
+          setShowCopyPicker(open);
+          if (!open) setCopySearch("");
+        }}
+      >
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Copy from existing event</DialogTitle>
           </DialogHeader>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search events..."
+              value={copySearch}
+              onChange={(e) => setCopySearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
-            {events?.map((event) => (
-              <button
-                key={event.id}
-                type="button"
-                onClick={() => handleCopyFrom(event.id)}
-                className="group rounded-lg border border-input bg-card text-left shadow-sm transition-colors hover:border-primary hover:bg-accent overflow-hidden"
-              >
-                <div className="relative w-full h-36">
-                  {event.imageUrl ? (
-                    <Image
-                      src={event.imageUrl}
-                      alt={event.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                      No image
+            {events
+              ?.filter((event) =>
+                event.name.toLowerCase().includes(copySearch.toLowerCase()),
+              )
+              .map((event) => (
+                <button
+                  key={event.id}
+                  type="button"
+                  onClick={() => handleCopyFrom(event.id)}
+                  className="group rounded-lg border border-input bg-card text-left shadow-sm transition-colors hover:border-primary hover:bg-accent overflow-hidden"
+                >
+                  <div className="relative w-full h-36">
+                    {event.imageUrl ? (
+                      <Image
+                        src={event.imageUrl}
+                        alt={event.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
+                        No image
+                      </div>
+                    )}
+                    <BadgePrice price={event.price} />
+                  </div>
+                  <div className="p-3">
+                    <div className="font-semibold text-sm truncate">
+                      {event.name}
                     </div>
-                  )}
-                  <BadgePrice price={event.price} />
-                </div>
-                <div className="p-3">
-                  <div className="font-semibold text-sm truncate">
-                    {event.name}
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {formatDateOnly(event.startTime)} &middot;{" "}
+                      {event.capacity} spots
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {formatDateOnly(event.startTime)} &middot; {event.capacity}{" "}
-                    spots
-                  </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
           </div>
         </DialogContent>
       </Dialog>
