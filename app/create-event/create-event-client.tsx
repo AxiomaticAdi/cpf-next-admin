@@ -209,11 +209,18 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
-            {events
-              ?.filter((event) =>
+            {(() => {
+              const filtered = events?.filter((event) =>
                 event.name.toLowerCase().includes(copySearch.toLowerCase()),
-              )
-              .map((event) => (
+              );
+              if (copySearch && filtered?.length === 0) {
+                return (
+                  <p className="col-span-full text-center text-sm text-muted-foreground py-8">
+                    No events found matching &ldquo;{copySearch}&rdquo;
+                  </p>
+                );
+              }
+              return filtered?.map((event) => (
                 <button
                   key={event.id}
                   type="button"
@@ -245,7 +252,8 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                     </div>
                   </div>
                 </button>
-              ))}
+              ));
+            })()}
           </div>
         </DialogContent>
       </Dialog>
