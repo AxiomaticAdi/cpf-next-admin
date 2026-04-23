@@ -444,10 +444,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                 }
               />
               {depositExceedsPrice && (
-                <p
-                  id="depositPrice-error"
-                  className="text-sm text-destructive"
-                >
+                <p id="depositPrice-error" className="text-sm text-destructive">
                   Deposit must be less than the base price ($
                   {parsedBasePrice.toFixed(2)}).
                 </p>
