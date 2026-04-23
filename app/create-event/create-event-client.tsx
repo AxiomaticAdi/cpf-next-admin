@@ -429,6 +429,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                 value={formData.depositPrice}
                 onChange={handleInputChange}
                 placeholder="19.99"
+                required={depositEnabled}
               />
             </div>
           )}
