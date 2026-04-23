@@ -167,6 +167,31 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                 />
               </dd>
             </div>
+            <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
+              <dt className="font-medium text-muted-foreground">
+                Deposit price, including sales tax
+              </dt>
+              <dd>
+                {editedEvent.depositPrice !== undefined ? (
+                  <input
+                    type="number"
+                    value={editedEvent.depositPrice}
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent,
+                        depositPrice: Number(e.target.value),
+                      })
+                    }
+                    min={0.01}
+                    step={0.01}
+                    placeholder="19.99"
+                    className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                ) : (
+                  <span className="text-muted-foreground">N/A</span>
+                )}
+              </dd>
+            </div>
           </dl>
 
           <div className="mt-6 space-y-2">

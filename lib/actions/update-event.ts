@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp, FieldValue } from "firebase-admin/firestore";
 import db from "@/firebase.config";
 import { Event } from "@/types";
 import { validateEvent } from "./validate-event";
@@ -37,7 +37,7 @@ export async function updateEvent(
     }
 
     // Convert Event type to FirebaseEventsDocument format
-    const firebaseEvent = {
+    const baseEvent = {
       EventId: updatedEvent.id,
       Name: updatedEvent.name,
       Description: updatedEvent.description,
@@ -49,7 +49,10 @@ export async function updateEvent(
       Price: updatedEvent.price,
     };
 
-    await eventRef.update(firebaseEvent);
+    await eventRef.update({
+      ...baseEvent,
+      DepositPrice: updatedEvent.depositPrice ?? FieldValue.delete(),
+    });
 
     revalidatePath("/");
     revalidatePath("/events");

@@ -25,6 +25,7 @@ export async function fetchEvents(): Promise<Event[]> {
         capacity: data.Capacity,
         sold: data.Sold,
         price: data.Price,
+        depositPrice: data.DepositPrice,
       };
       events.push(eventItem);
     });

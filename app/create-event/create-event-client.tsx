@@ -15,7 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { createEvent } from "@/lib/actions/create-event";
-import { SALES_TAX } from "@/lib/constants";
+import { SALES_TAX, DEFAULT_DEPOSIT_PRICE } from "@/lib/constants";
 import { toast } from "sonner";
 import { Event } from "@/types";
 import { formatDateOnly } from "@/lib/utils";
@@ -37,9 +37,11 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
     endDateTime: "",
     capacity: "",
     price: "",
+    depositPrice: "",
   });
 
   const [addSalesTax, setAddSalesTax] = useState(true);
+  const [depositEnabled, setDepositEnabled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showCopyPicker, setShowCopyPicker] = useState(false);
@@ -59,8 +61,10 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
         endDateTime: "",
         capacity: "",
         price: "",
+        depositPrice: "",
       });
       setAddSalesTax(true);
+      setDepositEnabled(false);
       return;
     }
 
@@ -70,6 +74,11 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
     const basePrice = event.price / (1 + SALES_TAX);
     const basePriceStr = isNaN(basePrice) ? "" : basePrice.toFixed(2);
 
+    const baseDeposit =
+      event.depositPrice !== undefined
+        ? (event.depositPrice / (1 + SALES_TAX)).toFixed(2)
+        : "";
+
     setFormData({
       name: event.name,
       description: event.description,
@@ -78,13 +87,23 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
       endDateTime: "",
       capacity: String(event.capacity),
       price: basePriceStr,
+      depositPrice: baseDeposit,
     });
     setAddSalesTax(true);
+    setDepositEnabled(event.depositPrice !== undefined);
 
     toast.info(`Prefilled from "${event.name}". Set your dates to continue.`);
   };
 
   const copiedEvent = events?.find((e) => e.id === copyFromId);
+
+  const parsedBasePrice = parseFloat(formData.price);
+  const parsedBaseDeposit = parseFloat(formData.depositPrice);
+  const depositExceedsPrice =
+    depositEnabled &&
+    Number.isFinite(parsedBasePrice) &&
+    Number.isFinite(parsedBaseDeposit) &&
+    parsedBaseDeposit >= parsedBasePrice;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -122,8 +141,10 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
           endDateTime: "",
           capacity: "",
           price: "",
+          depositPrice: "",
         });
         setAddSalesTax(true);
+        setDepositEnabled(false);
       } else {
         toast.error(`Error: ${result.error}`);
       }
@@ -373,8 +394,72 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
           </Label>
         </div>
 
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="depositEnabled"
+              checked={depositEnabled}
+              onCheckedChange={(checked) => {
+                const enabled = checked === true;
+                setDepositEnabled(enabled);
+                setFormData((prev) => ({
+                  ...prev,
+                  depositPrice: enabled ? String(DEFAULT_DEPOSIT_PRICE) : "",
+                }));
+              }}
+            />
+            <Label
+              htmlFor="depositEnabled"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Enable deposit?
+              {depositEnabled && formData.depositPrice && (
+                <span className="ml-2 text-muted-foreground">
+                  Deposit price: $
+                  {addSalesTax
+                    ? (
+                        parseFloat(formData.depositPrice) *
+                        (1 + SALES_TAX)
+                      ).toFixed(2)
+                    : parseFloat(formData.depositPrice).toFixed(2)}
+                </span>
+              )}
+            </Label>
+          </div>
+          {depositEnabled && (
+            <div className="ml-6 space-y-2">
+              <Label htmlFor="depositPrice">Deposit Amount ($)</Label>
+              <Input
+                id="depositPrice"
+                name="depositPrice"
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={formData.depositPrice}
+                onChange={handleInputChange}
+                placeholder="19.99"
+                required={depositEnabled}
+                aria-invalid={depositExceedsPrice || undefined}
+                aria-describedby={
+                  depositExceedsPrice ? "depositPrice-error" : undefined
+                }
+              />
+              {depositExceedsPrice && (
+                <p id="depositPrice-error" className="text-sm text-destructive">
+                  Deposit must be less than the base price ($
+                  {parsedBasePrice.toFixed(2)}).
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="flex gap-4 pt-4">
-          <Button type="submit" className="flex-1">
+          <Button
+            type="submit"
+            className="flex-1"
+            disabled={depositExceedsPrice}
+          >
             Preview Event
           </Button>
           <Button
@@ -389,8 +474,10 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                 endDateTime: "",
                 capacity: "",
                 price: "",
+                depositPrice: "",
               });
               setAddSalesTax(true);
+              setDepositEnabled(false);
             }}
           >
             Clear Form

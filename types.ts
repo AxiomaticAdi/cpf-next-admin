@@ -10,6 +10,7 @@ export type FirebaseEventsDocument = {
   Capacity: number;
   Sold: number;
   Price: number;
+  DepositPrice?: number;
 };
 
 export type Event = {
@@ -22,4 +23,5 @@ export type Event = {
   capacity: number;
   sold: number;
   price: number;
+  depositPrice?: number;
 };

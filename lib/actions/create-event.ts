@@ -17,6 +17,7 @@ export type CreateEventFormData = {
   capacity: string;
   price: string;
   addSalesTax: boolean;
+  depositPrice: string; // empty string = no deposit
 };
 
 export async function createEvent(formData: CreateEventFormData) {
@@ -44,6 +45,15 @@ export async function createEvent(formData: CreateEventFormData) {
       ? basePrice * (1 + SALES_TAX)
       : basePrice;
 
+    // Calculate deposit price if provided
+    const depositPriceRaw = parseFloat(formData.depositPrice);
+    const depositPrice =
+      formData.depositPrice && !isNaN(depositPriceRaw) && depositPriceRaw > 0
+        ? formData.addSalesTax
+          ? Math.round(depositPriceRaw * (1 + SALES_TAX) * 100) / 100
+          : Math.round(depositPriceRaw * 100) / 100
+        : undefined;
+
     // Create Event object for validation
     // Parse datetime strings as California timezone
     const eventToValidate: Event = {
@@ -56,6 +66,7 @@ export async function createEvent(formData: CreateEventFormData) {
       capacity: capacity,
       sold: sold,
       price: Math.round(finalPrice * 100) / 100,
+      depositPrice,
     };
 
     // Validate the event data
@@ -80,6 +91,7 @@ export async function createEvent(formData: CreateEventFormData) {
       Capacity: eventToValidate.capacity,
       Sold: eventToValidate.sold,
       Price: eventToValidate.price,
+      ...(depositPrice !== undefined ? { DepositPrice: depositPrice } : {}),
     };
 
     // Add document to Firestore Events collection
