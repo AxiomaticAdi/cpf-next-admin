@@ -9,6 +9,7 @@ import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
 import { ImageUpload } from "@/components/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DEFAULT_DEPOSIT_PRICE } from "@/lib/constants";
 
 type ModifyEventClientProps = {
   events: Event[];
@@ -179,7 +180,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                   onCheckedChange={(checked) =>
                     setEditedEvent({
                       ...editedEvent,
-                      depositPrice: checked === true ? 0.01 : undefined,
+                      depositPrice: checked === true ? DEFAULT_DEPOSIT_PRICE : undefined,
                     })
                   }
                 />
