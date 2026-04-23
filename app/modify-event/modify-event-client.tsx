@@ -8,6 +8,7 @@ import { formatDateTimeLocalCA, parseDateTimeLocalAsCA } from "@/lib/utils";
 import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
 import { ImageUpload } from "@/components/image-upload";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type ModifyEventClientProps = {
   events: Event[];
@@ -165,6 +166,36 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                   step={0.01}
                   className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
+              </dd>
+            </div>
+            <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
+              <dt className="font-medium text-muted-foreground">Deposit price</dt>
+              <dd className="flex items-center gap-3">
+                <Checkbox
+                  id="depositEnabled"
+                  checked={editedEvent.depositPrice !== undefined}
+                  onCheckedChange={(checked) =>
+                    setEditedEvent({
+                      ...editedEvent,
+                      depositPrice: checked === true ? 0 : undefined,
+                    })
+                  }
+                />
+                {editedEvent.depositPrice !== undefined && (
+                  <input
+                    type="number"
+                    value={editedEvent.depositPrice}
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent,
+                        depositPrice: Number(e.target.value),
+                      })
+                    }
+                    min={0}
+                    step={0.01}
+                    className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                )}
               </dd>
             </div>
           </dl>
