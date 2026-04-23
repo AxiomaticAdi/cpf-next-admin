@@ -97,6 +97,14 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
 
   const copiedEvent = events?.find((e) => e.id === copyFromId);
 
+  const parsedBasePrice = parseFloat(formData.price);
+  const parsedBaseDeposit = parseFloat(formData.depositPrice);
+  const depositExceedsPrice =
+    depositEnabled &&
+    Number.isFinite(parsedBasePrice) &&
+    Number.isFinite(parsedBaseDeposit) &&
+    parsedBaseDeposit >= parsedBasePrice;
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -430,13 +438,30 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                 onChange={handleInputChange}
                 placeholder="19.99"
                 required={depositEnabled}
+                aria-invalid={depositExceedsPrice || undefined}
+                aria-describedby={
+                  depositExceedsPrice ? "depositPrice-error" : undefined
+                }
               />
+              {depositExceedsPrice && (
+                <p
+                  id="depositPrice-error"
+                  className="text-sm text-destructive"
+                >
+                  Deposit must be less than the base price ($
+                  {parsedBasePrice.toFixed(2)}).
+                </p>
+              )}
             </div>
           )}
         </div>
 
         <div className="flex gap-4 pt-4">
-          <Button type="submit" className="flex-1">
+          <Button
+            type="submit"
+            className="flex-1"
+            disabled={depositExceedsPrice}
+          >
             Preview Event
           </Button>
           <Button

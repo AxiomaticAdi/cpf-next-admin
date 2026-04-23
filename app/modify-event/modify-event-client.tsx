@@ -8,8 +8,6 @@ import { formatDateTimeLocalCA, parseDateTimeLocalAsCA } from "@/lib/utils";
 import { useEventSelector } from "@/lib/hooks/use-event-selector";
 import { EventSelector } from "@/components/event-selector";
 import { ImageUpload } from "@/components/image-upload";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DEFAULT_DEPOSIT_PRICE } from "@/lib/constants";
 
 type ModifyEventClientProps = {
   events: Event[];
@@ -173,18 +171,8 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               <dt className="font-medium text-muted-foreground">
                 Deposit price, including sales tax
               </dt>
-              <dd className="flex items-center gap-3">
-                <Checkbox
-                  id="depositEnabled"
-                  checked={editedEvent.depositPrice !== undefined}
-                  onCheckedChange={(checked) =>
-                    setEditedEvent({
-                      ...editedEvent,
-                      depositPrice: checked === true ? DEFAULT_DEPOSIT_PRICE : undefined,
-                    })
-                  }
-                />
-                {editedEvent.depositPrice !== undefined && (
+              <dd>
+                {editedEvent.depositPrice !== undefined ? (
                   <input
                     type="number"
                     value={editedEvent.depositPrice}
@@ -199,6 +187,8 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                     placeholder="19.99"
                     className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   />
+                ) : (
+                  <span className="text-muted-foreground">N/A</span>
                 )}
               </dd>
             </div>
