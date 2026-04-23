@@ -169,7 +169,9 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
               </dd>
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
-              <dt className="font-medium text-muted-foreground">Deposit price</dt>
+              <dt className="font-medium text-muted-foreground">
+                Deposit price, including sales tax
+              </dt>
               <dd className="flex items-center gap-3">
                 <Checkbox
                   id="depositEnabled"
