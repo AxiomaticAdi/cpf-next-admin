@@ -37,6 +37,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
     endDateTime: "",
     capacity: "",
     price: "",
+    depositPrice: "",
   });
 
   const [addSalesTax, setAddSalesTax] = useState(true);
@@ -59,6 +60,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
         endDateTime: "",
         capacity: "",
         price: "",
+        depositPrice: "",
       });
       setAddSalesTax(true);
       return;
@@ -78,6 +80,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
       endDateTime: "",
       capacity: String(event.capacity),
       price: basePriceStr,
+      depositPrice: "",
     });
     setAddSalesTax(true);
 
@@ -122,6 +125,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
           endDateTime: "",
           capacity: "",
           price: "",
+          depositPrice: "",
         });
         setAddSalesTax(true);
       } else {
@@ -389,6 +393,7 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
                 endDateTime: "",
                 capacity: "",
                 price: "",
+                depositPrice: "",
               });
               setAddSalesTax(true);
             }}

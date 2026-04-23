@@ -55,6 +55,14 @@ export async function validateEvent(
     errors.push("Price cannot be negative");
   }
 
+  if (event.depositPrice !== undefined) {
+    if (!Number.isFinite(event.depositPrice) || event.depositPrice <= 0) {
+      errors.push("Deposit price must be a positive number");
+    } else if (Number.isFinite(event.price) && event.depositPrice >= event.price) {
+      errors.push("Deposit price must be less than the full ticket price");
+    }
+  }
+
   // Date validations
   if (!(event.startTime instanceof Date) || isNaN(event.startTime.getTime())) {
     errors.push("Start time must be a valid date");
