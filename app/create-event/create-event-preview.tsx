@@ -11,6 +11,7 @@ interface EventFormData {
   endDateTime: string;
   capacity: string;
   price: string;
+  depositPrice: string;
 }
 
 interface EventDetailsSectionProps {
@@ -89,6 +90,15 @@ export default function EventDetailsSection({
         </div>
       )}
       <p>{remainingTickets} tickets available</p>
+      {formData.depositPrice && (
+        <p className="text-sm text-muted-foreground">
+          Deposit: $
+          {addSalesTax
+            ? (parseFloat(formData.depositPrice) * (1 + SALES_TAX)).toFixed(2)
+            : parseFloat(formData.depositPrice).toFixed(2)}{" "}
+          · Full price: ${finalPrice.toFixed(2)}
+        </p>
+      )}
     </div>
   );
 }
