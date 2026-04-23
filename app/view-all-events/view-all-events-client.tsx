@@ -84,8 +84,16 @@ export function ViewAllEventsClient({ events }: ViewAllEventsClientProps) {
             </div>
             <div className="grid grid-cols-[120px_1fr] gap-2">
               <dt className="font-medium text-muted-foreground">
-                Price, including sales tax
+                Deposit price
               </dt>
+              <dd>
+                {selectedEvent.depositPrice !== undefined
+                  ? `$${selectedEvent.depositPrice.toFixed(2)}`
+                  : "N/A"}
+              </dd>
+            </div>
+            <div className="grid grid-cols-[120px_1fr] gap-2">
+              <dt className="font-medium text-muted-foreground">Full price</dt>
               <dd>${selectedEvent.price.toFixed(2)}</dd>
             </div>
           </dl>
