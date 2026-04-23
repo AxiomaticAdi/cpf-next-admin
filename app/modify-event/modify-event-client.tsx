@@ -177,7 +177,7 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                   onCheckedChange={(checked) =>
                     setEditedEvent({
                       ...editedEvent,
-                      depositPrice: checked === true ? 0 : undefined,
+                      depositPrice: checked === true ? 0.01 : undefined,
                     })
                   }
                 />
@@ -191,8 +191,9 @@ export function ModifyEventClient({ events }: ModifyEventClientProps) {
                         depositPrice: Number(e.target.value),
                       })
                     }
-                    min={0}
+                    min={0.01}
                     step={0.01}
+                    placeholder="19.99"
                     className="w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 )}
