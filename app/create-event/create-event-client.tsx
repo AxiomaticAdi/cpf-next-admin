@@ -15,7 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { createEvent } from "@/lib/actions/create-event";
-import { SALES_TAX } from "@/lib/constants";
+import { SALES_TAX, DEFAULT_DEPOSIT_PRICE } from "@/lib/constants";
 import { toast } from "sonner";
 import { Event } from "@/types";
 import { formatDateOnly } from "@/lib/utils";
@@ -402,9 +402,10 @@ export function CreateEventClient({ events }: CreateEventClientProps) {
               onCheckedChange={(checked) => {
                 const enabled = checked === true;
                 setDepositEnabled(enabled);
-                if (!enabled) {
-                  setFormData((prev) => ({ ...prev, depositPrice: "" }));
-                }
+                setFormData((prev) => ({
+                  ...prev,
+                  depositPrice: enabled ? String(DEFAULT_DEPOSIT_PRICE) : "",
+                }));
               }}
             />
             <Label
